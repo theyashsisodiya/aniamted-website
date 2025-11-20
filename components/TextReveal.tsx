@@ -1,5 +1,6 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useLayoutEffect } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 interface TextRevealProps {
   children: string;
@@ -8,55 +9,44 @@ interface TextRevealProps {
 }
 
 const TextReveal: React.FC<TextRevealProps> = ({ children, className = "", delay = 0 }) => {
-  // Split by words for better performance than splitting by characters
+  const containerRef = useRef<HTMLDivElement>(null);
   const words = children.split(" ");
 
-  const container = {
-    hidden: { opacity: 0 },
-    visible: (i = 1) => ({
-      opacity: 1,
-      transition: { staggerChildren: 0.12, delayChildren: 0.04 * i + delay },
-    }),
-  };
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const spans = containerRef.current?.querySelectorAll('span');
+      if (spans) {
+        gsap.from(spans, {
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 90%",
+            toggleActions: "play none none reverse"
+          },
+          y: 40,
+          opacity: 0,
+          filter: "blur(8px)",
+          duration: 0.8,
+          ease: "power4.out",
+          stagger: 0.05,
+          delay: delay
+        });
+      }
+    }, containerRef);
 
-  const child = {
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: {
-        type: "spring",
-        damping: 12,
-        stiffness: 100,
-      },
-    },
-    hidden: {
-      opacity: 0,
-      y: 20,
-      filter: "blur(10px)", // Added blur for "future" feel
-      transition: {
-        type: "spring",
-        damping: 12,
-        stiffness: 100,
-      },
-    },
-  };
+    return () => ctx.revert();
+  }, [delay]);
 
   return (
-    <motion.div
-      style={{ overflow: "hidden", display: "flex", flexWrap: "wrap" }}
-      variants={container}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-10%" }} // optimization: only animate once
-      className={className}
+    <div
+      ref={containerRef}
+      className={`${className} flex flex-wrap overflow-hidden`}
     >
       {words.map((word, index) => (
-        <motion.span variants={child} style={{ marginRight: "0.25em" }} key={index}>
+        <span key={index} className="mr-[0.25em] inline-block will-change-transform">
           {word}
-        </motion.span>
+        </span>
       ))}
-    </motion.div>
+    </div>
   );
 };
 

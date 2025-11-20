@@ -1,36 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import { Menu, X } from 'lucide-react';
-import { NavItem } from '../types';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const items: NavItem[] = [
-  { label: 'Manifesto', href: '#manifesto' },
-  { label: 'Vision', href: '#vision' },
-  { label: 'Oracle', href: '#oracle' },
+const items = [
+  { label: 'For Employers', href: '#employers' },
+  { label: 'For Candidates', href: '#candidates' },
+  { label: 'Our Mission', href: '#mission' },
+  { label: 'Find Jobs', href: '#join' },
 ];
 
 const Navigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { scrollY } = useScroll();
-  const navBackground = useTransform(
-    scrollY,
-    [0, 100],
-    ['rgba(5, 5, 5, 0)', 'rgba(5, 5, 5, 0.8)']
-  );
-  const backdropBlur = useTransform(
-    scrollY,
-    [0, 100],
-    ['blur(0px)', 'blur(12px)']
-  );
+  const navRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        start: "top top",
+        end: 99999,
+        onUpdate: (self) => {
+          if (self.progress > 0.01) {
+             gsap.to(navRef.current, {
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(12px)',
+                borderBottomColor: 'rgba(0,0,0,0.05)',
+                duration: 0.3
+             });
+          } else {
+             gsap.to(navRef.current, {
+                backgroundColor: 'rgba(248, 250, 252, 0)',
+                backdropFilter: 'blur(0px)',
+                borderBottomColor: 'rgba(0,0,0,0)',
+                duration: 0.3
+             });
+          }
+        }
+      });
+    }, navRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Mobile Menu Animation
+  useLayoutEffect(() => {
+    if (!mobileMenuRef.current) return;
+    
+    if (isOpen) {
+        gsap.to(mobileMenuRef.current, { x: '0%', duration: 0.4, ease: 'power3.out', opacity: 1 });
+    } else {
+        gsap.to(mobileMenuRef.current, { x: '100%', duration: 0.4, ease: 'power3.in', opacity: 0 });
+    }
+  }, [isOpen]);
 
   return (
     <>
-      <motion.nav
-        style={{ backgroundColor: navBackground, backdropFilter: backdropBlur }}
-        className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-4 md:px-12 transition-colors duration-300 border-b border-white/5"
+      <nav
+        ref={navRef}
+        className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-4 md:px-12 md:py-5 border-b border-transparent transition-all duration-300"
       >
-        <div className="text-2xl font-display font-bold tracking-tighter text-white z-50">
-          AETHER<span className="text-neon-purple">.</span>
+        <div className="flex items-center z-50">
+           {/* Replaced Text with Logo Image */}
+           <img 
+             src="logo.png" 
+             alt="MingHwee" 
+             className="h-10 md:h-14 w-auto object-contain"
+             onError={(e) => {
+               // Fallback if image fails to load, though user should provide the file
+               e.currentTarget.style.display = 'none';
+               e.currentTarget.parentElement!.innerHTML = '<span class="text-2xl font-display font-bold tracking-tight text-brand-dark">MingHwee<span class="text-brand-teal">.</span></span>';
+             }}
+           />
         </div>
 
         {/* Desktop Nav */}
@@ -39,7 +80,7 @@ const Navigation: React.FC = () => {
             <a
               key={item.label}
               href={item.href}
-              className="text-sm font-medium text-gray-400 hover:text-white transition-colors tracking-widest uppercase"
+              className="text-sm font-semibold text-slate-600 hover:text-brand-teal transition-colors tracking-wide"
             >
               {item.label}
             </a>
@@ -48,31 +89,29 @@ const Navigation: React.FC = () => {
 
         {/* Mobile Toggle */}
         <button
-          className="md:hidden text-white z-50"
+          className="md:hidden text-slate-800 z-50 p-2"
           onClick={() => setIsOpen(!isOpen)}
         >
-          {isOpen ? <X /> : <Menu />}
+          {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
-      </motion.nav>
+      </nav>
 
       {/* Mobile Menu Overlay */}
-      <motion.div
-        initial={{ opacity: 0, x: '100%' }}
-        animate={{ opacity: isOpen ? 1 : 0, x: isOpen ? '0%' : '100%' }}
-        transition={{ type: 'tween', duration: 0.4 }}
-        className="fixed inset-0 bg-black z-40 flex flex-col justify-center items-center space-y-8 md:hidden"
+      <div
+        ref={mobileMenuRef}
+        className="fixed inset-0 bg-white z-40 flex flex-col justify-center items-center space-y-8 md:hidden opacity-0 translate-x-full pointer-events-auto"
       >
         {items.map((item) => (
           <a
             key={item.label}
             href={item.href}
             onClick={() => setIsOpen(false)}
-            className="text-3xl font-display font-bold text-white hover:text-neon-purple transition-colors"
+            className="text-3xl font-display font-bold text-slate-800 hover:text-brand-teal transition-colors"
           >
             {item.label}
           </a>
         ))}
-      </motion.div>
+      </div>
     </>
   );
 };

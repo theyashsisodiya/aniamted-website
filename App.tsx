@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
-import VisualStory from './components/VisualStory';
-import Oracle from './components/Oracle';
+import Mission from './components/Mission';
+import JoinCTA from './components/JoinCTA';
 import Footer from './components/Footer';
 import Cursor from './components/Cursor';
 import Marquee from './components/Marquee';
-import Capabilities from './components/Capabilities';
-import ParallaxShowcase from './components/ParallaxShowcase';
+import HowItWorks from './components/HowItWorks';
+import CandidateShowcase from './components/CandidateShowcase';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Reduce loading time slightly for better UX
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
@@ -22,56 +24,33 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-void text-white min-h-screen selection:bg-neon-purple selection:text-white cursor-none overflow-x-hidden">
+    <div className="bg-slate-50 text-brand-dark min-h-screen selection:bg-brand-teal selection:text-white cursor-none overflow-x-hidden">
        <Cursor />
        
-       <AnimatePresence>
-        {isLoading ? (
-          <motion.div
-            key="loader"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center"
-          >
-            <div className="relative">
-               <motion.div 
-                 animate={{ rotate: 360 }}
-                 transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-                 className="w-24 h-24 rounded-full border-t-2 border-neon-purple border-r-2 border-r-transparent"
-               />
-               <motion.div 
-                 animate={{ rotate: -360 }}
-                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                 className="absolute inset-0 w-24 h-24 rounded-full border-b-2 border-neon-blue border-l-2 border-l-transparent scale-75"
-               />
+       {/* Simple Loader */}
+       {isLoading && (
+          <div className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center transition-opacity duration-700 ease-out">
+            <div className="relative animate-spin-slow">
+               <div className="w-20 h-20 rounded-full border-t-4 border-brand-teal border-r-4 border-r-transparent animate-spin" />
             </div>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
-              className="mt-8 text-xs font-mono uppercase tracking-[0.5em] text-white/50"
-            >
-              Loading Experience
-            </motion.p>
-          </motion.div>
-        ) : (
-          <motion.main
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          >
+            <p className="mt-8 text-xs font-bold uppercase tracking-[0.3em] text-slate-400 animate-pulse">
+              MingHwee
+            </p>
+          </div>
+       )}
+
+       {!isLoading && (
+          <main className="opacity-100 transition-opacity duration-1000">
             <Navigation />
             <Hero />
             <Marquee />
-            <VisualStory />
-            <ParallaxShowcase />
-            <Capabilities />
-            <Oracle />
+            <CandidateShowcase />
+            <HowItWorks />
+            <Mission />
+            <JoinCTA />
             <Footer />
-          </motion.main>
+          </main>
         )}
-      </AnimatePresence>
     </div>
   );
 };

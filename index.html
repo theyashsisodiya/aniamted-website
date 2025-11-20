@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AETHER | 2025</title>
+    <title>MingHwee | Premier Domestic Talent Connection</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -17,24 +17,19 @@
               display: ['Syne', 'sans-serif'],
             },
             colors: {
-              'void': '#050505',
-              'neon-purple': '#b026ff',
-              'neon-blue': '#2667ff',
-              'glass': 'rgba(255, 255, 255, 0.05)',
+              'brand-dark': '#0f172a',
+              'brand-blue': '#0ea5e9',
+              'brand-teal': '#14b8a6',
+              'brand-soft': '#f0f9ff',
             },
             animation: {
               'spin-slow': 'spin 20s linear infinite',
               'float': 'float 6s ease-in-out infinite',
-              'pulse-glow': 'pulse-glow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             },
             keyframes: {
               float: {
                 '0%, 100%': { transform: 'translateY(0)' },
                 '50%': { transform: 'translateY(-20px)' },
-              },
-              'pulse-glow': {
-                '0%, 100%': { opacity: 1, boxShadow: '0 0 20px rgba(176, 38, 255, 0.5)' },
-                '50%': { opacity: .5, boxShadow: '0 0 5px rgba(176, 38, 255, 0.1)' },
               }
             }
           },
@@ -42,25 +37,24 @@
       }
     </script>
     <style>
+      html {
+        scroll-behavior: smooth;
+      }
       body {
-        background-color: #050505;
-        color: #ffffff;
+        background-color: #f8fafc;
+        color: #0f172a;
         overflow-x: hidden;
       }
-      .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-track {
-        background: #050505;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #333;
-        border-radius: 3px;
-      }
       .glass-panel {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+      }
+      .glass-panel-dark {
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
     </style>
   <script type="importmap">
@@ -69,14 +63,18 @@
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
-    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "gsap": "https://esm.sh/gsap@3.12.5",
+    "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
+    "@studio-freight/lenis": "https://esm.sh/@studio-freight/lenis@1.0.42",
+    "gsap/": "https://aistudiocdn.com/gsap@^3.13.0/",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24"
   }
 }
 </script>
 </head>
-  <body class="custom-scrollbar antialiased selection:bg-neon-purple selection:text-white">
+  <body class="antialiased selection:bg-brand-teal selection:text-white">
     <div id="root"></div>
   </body>
 </html>

@@ -1,105 +1,119 @@
-import React from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowDown, Play } from 'lucide-react';
-import TextReveal from './TextReveal';
+import React, { useRef, useLayoutEffect } from 'react';
+import { ArrowRight, CheckCircle } from 'lucide-react';
+import gsap from 'gsap';
 
 const Hero: React.FC = () => {
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, 100]);
-  const y2 = useTransform(scrollY, [0, 500], [0, -100]);
+  const comp = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      tl.from(".hero-badge", { opacity: 0, x: -20, duration: 0.8, delay: 0.2 })
+        .from(".hero-title span", { y: 100, opacity: 0, stagger: 0.1, duration: 1 }, "-=0.4")
+        .from(".hero-desc", { opacity: 0, y: 20, duration: 0.8 }, "-=0.6")
+        .from(".hero-buttons", { opacity: 0, y: 20, duration: 0.8 }, "-=0.6")
+        .from(".hero-stats", { opacity: 0, duration: 0.8 }, "-=0.4")
+        .from(".hero-visual", { opacity: 0, scale: 0.95, y: 50, duration: 1.2 }, "-=1")
+        .from(".floating-card", { x: 50, opacity: 0, duration: 0.8 }, "-=0.5")
+        .to(".progress-bar-fill", { width: "96%", duration: 1.5, ease: "power2.inOut" }, "-=0.2");
+
+    }, comp);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-void perspective-1000">
-      {/* Performance Optimized Background: Replaced heavy blur-divs with radial gradients */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-neon-purple/20 via-void to-void opacity-70"></div>
-      <div className="absolute inset-0 z-0 overflow-hidden bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-neon-blue/20 via-void to-void opacity-70"></div>
+    <section ref={comp} className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-slate-50 pt-24 md:pt-20 pb-12">
+      {/* Soft Background Blobs */}
+      <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] rounded-full bg-brand-teal/5 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-brand-blue/5 blur-3xl pointer-events-none" />
 
-      {/* Grid & Noise */}
+      {/* Grid Pattern */}
       <div 
-        className="absolute inset-0 opacity-20 z-0"
+        className="absolute inset-0 opacity-[0.3] z-0 pointer-events-none"
         style={{
-          backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
-          backgroundSize: '60px 60px'
+          backgroundImage: 'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
         }}
       />
-      <div className="absolute inset-0 opacity-[0.04] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none z-0 mix-blend-overlay" />
 
-      {/* Main Content */}
-      <div className="relative z-10 text-center px-6 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="flex items-center justify-center gap-4 mb-8"
-        >
-          <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-neon-purple" />
-          <span className="text-neon-purple tracking-[0.5em] text-xs md:text-sm uppercase font-bold">
-            Established 2025
-          </span>
-          <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-neon-purple" />
-        </motion.div>
-
-        <div className="mb-2 flex justify-center overflow-hidden">
-            <TextReveal className="text-6xl md:text-9xl font-display font-extrabold tracking-tighter text-white justify-center drop-shadow-2xl">
-                DESIGN
-            </TextReveal>
-        </div>
+      <div className="relative z-10 px-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         
-        <div className="mb-8 flex justify-center overflow-hidden">
-           <TextReveal 
-             delay={0.4}
-             className="text-6xl md:text-9xl font-display font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-gray-100 via-gray-400 to-gray-700 justify-center"
-           >
-             THE_UNSEEN
-           </TextReveal>
+        {/* Left: Text Content */}
+        <div className="text-left">
+          <div className="hero-badge flex items-center gap-2 mb-6">
+            <div className="h-[1px] w-8 bg-brand-teal" />
+            <span className="text-brand-teal tracking-widest text-xs font-bold uppercase">
+              Trusted by 10,000+ Families
+            </span>
+          </div>
+
+          {/* Typography */}
+          {/* Added pb-4 to prevent descenders (like 'y' in Opportunity) from being cut off by overflow-hidden */}
+          <h1 className="hero-title text-5xl md:text-7xl lg:text-8xl font-display font-bold tracking-tight text-brand-dark leading-tight md:leading-[1.1] mb-6 overflow-hidden pb-4">
+            <span className="inline-block">Find Your</span> <br />
+            <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-brand-teal to-brand-blue">
+              Perfect Helper.
+            </span> <br />
+            <span className="inline-block">Fast.</span>
+          </h1>
+
+          <p className="hero-desc mb-10 text-slate-600 text-lg md:text-xl leading-relaxed max-w-lg font-light">
+            AI matches you. You decide. Done. We simplify hiring skilled Foreign Domestic Workers (FDWs) in Singapore and the Philippines.
+          </p>
+
+          <div className="hero-buttons flex flex-wrap gap-4">
+            <a
+              href="#join"
+              className="px-8 py-4 bg-brand-dark text-white rounded-full font-bold hover:bg-slate-800 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105"
+            >
+              Get Started
+              <ArrowRight className="w-4 h-4" />
+            </a>
+            <a
+              href="#how-it-works"
+              className="px-8 py-4 border border-slate-200 bg-white text-slate-800 rounded-full font-semibold hover:border-brand-teal/50 transition-all duration-300 shadow-sm hover:shadow-md"
+            >
+              How it Works
+            </a>
+          </div>
+
+          <div className="hero-stats mt-8 flex gap-6 text-sm text-slate-500 font-medium">
+            <span className="flex items-center gap-1"><CheckCircle className="w-4 h-4 text-brand-teal" /> Verified Profiles</span>
+            <span className="flex items-center gap-1"><CheckCircle className="w-4 h-4 text-brand-teal" /> No Hidden Fees</span>
+          </div>
         </div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="mt-8 text-gray-400 max-w-2xl mx-auto text-lg md:text-xl leading-relaxed font-light"
-        >
-          Architecting digital realities where <span className="text-white font-medium">motion</span> is language and <span className="text-white font-medium">interaction</span> is intuitive. Welcome to the post-screen era.
-        </motion.p>
+        {/* Right: Visual Hero Composition */}
+        <div className="hero-visual relative h-[400px] md:h-[600px] lg:h-[700px] w-full rounded-[2rem] overflow-hidden shadow-2xl group mt-8 lg:mt-0">
+           <div className="absolute inset-0 bg-gradient-to-tr from-brand-teal/30 to-transparent z-10 mix-blend-multiply pointer-events-none" />
+           
+           <img 
+             src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=1000&auto=format&fit=crop" 
+             alt="Helper assisting elderly" 
+             className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+           />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.4 }}
-          className="mt-12 flex flex-col md:flex-row items-center justify-center gap-6"
-        >
-          <a
-            href="#vision"
-            className="relative overflow-hidden px-8 py-4 bg-white text-black rounded-full font-bold tracking-wide hover:scale-105 transition-transform duration-300 flex items-center gap-2 group hover-trigger"
-          >
-            <span className="relative z-10 uppercase text-sm">Enter The Void</span>
-            <ArrowDown className="w-4 h-4 relative z-10 group-hover:translate-y-1 transition-transform" />
-            <div className="absolute inset-0 bg-neon-purple opacity-0 group-hover:opacity-10 transition-opacity" />
-          </a>
-
-          <button className="flex items-center gap-3 px-8 py-4 border border-white/10 rounded-full hover:bg-white/5 transition-colors group hover-trigger">
-             <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-neon-blue group-hover:text-black transition-colors">
-               <Play size={12} fill="currentColor" />
+           {/* Floating Glass Card */}
+           <div className="floating-card absolute bottom-6 left-6 right-6 md:left-auto md:right-10 md:w-80 glass-panel p-6 rounded-2xl z-20 bg-white/90 backdrop-blur-lg shadow-xl border-0">
+             <div className="flex items-center gap-4 mb-3">
+               <div className="w-12 h-12 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue font-bold">AI</div>
+               <div>
+                 <h4 className="font-bold text-slate-800">Smart Match</h4>
+                 <p className="text-xs text-slate-500">Finding the perfect fit</p>
+               </div>
              </div>
-             <span className="text-sm font-medium tracking-widest uppercase text-gray-300 group-hover:text-white">Showreel</span>
-          </button>
-        </motion.div>
+             <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+               <div className="progress-bar-fill h-full bg-brand-teal w-0" />
+             </div>
+             <div className="flex justify-between text-xs font-bold mt-2 text-brand-teal">
+               <span>Match Score</span>
+               <span>96%</span>
+             </div>
+           </div>
+        </div>
       </div>
-      
-      {/* Abstract Rotating Rings - Optimized with will-change */}
-      <motion.div 
-        style={{ y: y1 }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[120vh] h-[120vh] border border-white/5 rounded-full border-dashed opacity-20 pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 will-change-transform"
-      />
-       <motion.div 
-        style={{ y: y2 }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-        className="absolute w-[90vh] h-[90vh] border border-white/10 rounded-full opacity-20 pointer-events-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 will-change-transform"
-      />
     </section>
   );
 };
