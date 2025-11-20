@@ -14,10 +14,10 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate longer loading for "heavy" assets experience
+    // Reduce loading time slightly for better UX
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 2500);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -54,9 +54,6 @@ const App: React.FC = () => {
             >
               Loading Experience
             </motion.p>
-            <div className="absolute bottom-12 left-0 right-0 text-center">
-              <p className="text-[10px] text-gray-700 font-mono">AETHER v2.5.0 // INITIALIZING</p>
-            </div>
           </motion.div>
         ) : (
           <motion.main

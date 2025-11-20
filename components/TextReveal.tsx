@@ -8,6 +8,7 @@ interface TextRevealProps {
 }
 
 const TextReveal: React.FC<TextRevealProps> = ({ children, className = "", delay = 0 }) => {
+  // Split by words for better performance than splitting by characters
   const words = children.split(" ");
 
   const container = {
@@ -22,6 +23,7 @@ const TextReveal: React.FC<TextRevealProps> = ({ children, className = "", delay
     visible: {
       opacity: 1,
       y: 0,
+      filter: "blur(0px)",
       transition: {
         type: "spring",
         damping: 12,
@@ -31,6 +33,7 @@ const TextReveal: React.FC<TextRevealProps> = ({ children, className = "", delay
     hidden: {
       opacity: 0,
       y: 20,
+      filter: "blur(10px)", // Added blur for "future" feel
       transition: {
         type: "spring",
         damping: 12,
@@ -45,7 +48,7 @@ const TextReveal: React.FC<TextRevealProps> = ({ children, className = "", delay
       variants={container}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-10%" }}
+      viewport={{ once: true, margin: "-10%" }} // optimization: only animate once
       className={className}
     >
       {words.map((word, index) => (
